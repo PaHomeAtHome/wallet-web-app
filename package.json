@@ -28,6 +28,7 @@
     "react-hook-form": "^7.34.2",
     "react-icons": "^4.4.0",
     "react-loader-spinner": "^5.3.3",
+    "react-paginate": "^8.1.4",
     "react-password-strength-bar": "^0.4.1",
     "react-redux": "^8.0.2",
     "react-responsive": "^9.0.2",

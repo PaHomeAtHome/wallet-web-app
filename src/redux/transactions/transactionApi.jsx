@@ -33,6 +33,10 @@ export const transactionApi = createApi({
       }),
       invalidatesTags: ['Transaction'],
     }),
+    getTransactionsFullStatistic: builder.query({
+      query: () => `/transactions`,
+      providesTags: ['Transaction'],
+    }),
   }),
 });
 
@@ -40,4 +44,5 @@ export const {
   useGetTransactionsQuery,
   useAddTransactionMutation,
   useGetTransactionsStatisticsQuery,
+  useGetTransactionsFullStatisticQuery,
 } = transactionApi;

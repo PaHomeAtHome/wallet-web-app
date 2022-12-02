@@ -1,9 +1,12 @@
 import { useEffect, useState } from 'react';
+import ReactPaginate from 'react-paginate';
 
 import {
   useGetTransactionsQuery,
   useGetTransactionsStatisticsQuery,
+  useGetTransactionsFullStatisticQuery,
 } from '../../redux/transactions/transactionApi';
+
 import {
   TableContainer,
   TableHead,
@@ -15,6 +18,8 @@ import {
   TableSpan,
   ShortTableContainer,
 } from './Table.styled';
+
+import { ReactPaginateContainer } from './ReactPaginateContainer.styled';
 import { TableData } from './TableData';
 const colors = { income: '#24CCA7', expense: '#FF6596' };
 
@@ -45,6 +50,8 @@ function getWindowSize() {
 
 function Table() {
   const [windowSize, setWindowSize] = useState(getWindowSize());
+  const [pageCount, setPageCount] = useState(0);
+  const [page, setPage] = useState(1);
 
   useEffect(() => {
     function handleWindowResize() {
@@ -73,16 +80,28 @@ function Table() {
   var currBalance = '';
 
   const statData = useGetTransactionsStatisticsQuery('', '');
-  const data = useGetTransactionsQuery();
+  const { data } = useGetTransactionsQuery(page);
+  const { data: fullStatistic } = useGetTransactionsFullStatisticQuery();
 
   console.log('data=', data);
+  const pageSize = 10;
+
+  useEffect(() => {
+    if (fullStatistic) {
+      const pageCount = Math.ceil(fullStatistic.alllist.length / pageSize);
+      setPageCount(pageCount);
+    }
+  }, [fullStatistic]);
+
+  const handlePageClick = page => {
+    setPage(page.selected + 1);
+  };
 
   if (statData.data) {
     currBalance = statData.data.currBalance;
-    
   }
-  if (data.data) {
-    res = data.data.data;
+  if (data) {
+    res = data.data;
   }
 
   return (
@@ -158,6 +177,28 @@ function Table() {
             </ShortTableCell>
           ))}
         </ShortTableContainer>
+      )}
+
+      {pageCount && (
+        <ReactPaginateContainer>
+          <ReactPaginate
+            activeClassName={'item active '}
+            breakClassName={'item break-me '}
+            containerClassName={'pagination'}
+            disabledClassName={'disabled-page'}
+            nextClassName={'item next '}
+            pageClassName={'item pagination-page '}
+            previousClassName={'item previous'}
+            marginPagesDisplayed={2}
+            breakLabel="..."
+            nextLabel="Next >"
+            onPageChange={handlePageClick}
+            pageRangeDisplayed={1}
+            pageCount={pageCount}
+            previousLabel="< Previous"
+            renderOnZeroPageCount={null}
+          />
+        </ReactPaginateContainer>
       )}
     </div>
   );
